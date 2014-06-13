@@ -22,18 +22,29 @@ from .put_commands import *
 from .stats_commands import *
 from .whoami_commands import *
 
-from util import apply_command_chains
+from .base import BaseCommand
+from .util import apply_command_chains
 
 
 __author__ = 'Phillip B Oldham <info@oldham-made.net>'
 __version__ = ('0', '1', '0')
 
+console = Console(prompt="beanstalk", prompt_delim=">")
+
+
+class HelpCommand(BaseCommand):
+    __cmd__ = 'help'
+    __help__ = 'print this help message'
+
+    def run(self, line):
+        console.print_childs_help()
+
 
 def main():
     args = docopt(__doc__, version='.'.join(__version__))
-    console = Console(prompt="beanstalk", prompt_delim=">")
 
     command_chains = {
+        'help': HelpCommand,
         'whoami': WhoAmICommand,
         'overview': OverviewCommand,
         'list': {
