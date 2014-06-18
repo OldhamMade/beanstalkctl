@@ -17,7 +17,7 @@ class ListAllCommand(ListCommand):
 
     def run(self, line):
         titles = ('urgent', 'ready', 'delayed', 'buried', 'reserved')
-        Row = namedtuple('Row', ('Tube',) + titles)
+        Row = namedtuple('Row', ('Tube',) + tuple(t.title() for t in titles))
 
         data = []
         for tube in sorted(self.beanstalkd.tubes(), key=natural_sort_key):

@@ -28,17 +28,17 @@ class PeekCommand(BaseCommand):
 
         print """
 id: {id}
-age: {age}
-ttr: {ttr}
-state: {state}
+  age: {age}
+  ttr: {ttr}
+  state: {state}
   reserves: {reserves}
   releases: {releases}
   timeouts: {timeouts}
   buries: {buries}
   kicks: {kicks}
-body:=
+--body:--
 {body}
-""".format(body=job.body, **job.stats())
+---------""".format(body=job.body, **job.stats())
 
 
 
