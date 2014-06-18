@@ -27,9 +27,6 @@ from .base import BaseCommand
 from .util import apply_command_chains
 
 
-__author__ = 'Phillip B Oldham <info@oldham-made.net>'
-__version__ = ('0', '1', '0')
-
 console = Console(prompt="beanstalk", prompt_delim=">")
 
 
