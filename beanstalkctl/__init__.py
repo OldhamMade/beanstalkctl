@@ -13,6 +13,7 @@ import operator
 from docopt import docopt
 from ishell.console import Console
 
+from .clear_commands import *
 from .delete_commands import *
 from .kick_commands import *
 from .list_commands import *
@@ -48,11 +49,12 @@ def main():
         'whoami': WhoAmICommand,
         'overview': OverviewCommand,
         'list': {
-            'tubes': ListTubesCommand,
+            'all': ListAllCommand,
             'urgent': ListUrgentCommand,
             'delayed': ListDelayedCommand,
             'ready': ListReadyCommand,
             'buried': ListBuriedCommand,
+            'reserved': ListReservedCommand,
         },
         'peek': {
             'id': PeekByIDCommand,
@@ -65,14 +67,16 @@ def main():
             'tube': TubeStatsCommand,
         },
         'put': PutCommand,
-        'delete': {
-            'buried': DeleteBuriedCommand,
-        },
+        'delete': DeleteCommand,
         'kick': {
             'list': KickListCommand,
             'one': KickOneCommand,
             'tube': KickTubeCommand,
             'everything': KickEverythingCommand,
+        },
+        'clear': {
+            'tube': ClearTubeCommand,
+            'everything': ClearEverythingCommand,
         },
     }
 

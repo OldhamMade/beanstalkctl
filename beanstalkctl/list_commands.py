@@ -1,4 +1,4 @@
-import operator
+from collections import namedtuple
 
 from .base import BaseCommand
 from .util import natural_sort_key
@@ -9,56 +9,57 @@ class ListCommand(BaseCommand):
     __cmd__ = 'list'
     __help__ = 'not implemented'
 
-    def _print_tubes(self, data, title='Total'):
-        print
-
-        key = max(data.iteritems(), key=operator.itemgetter(1))[0]
-
-        fill = data[key]
-        if fill < len(title):
-            fill = len(title)
-
-        output_format = ' {0:>'+str(fill)+'} | {1}'
-        sorted_data = reversed(sorted(data.iteritems(),
-                                      key=operator.itemgetter(1)))
-
-        print (' {0:>'+str(fill)+'} | Tube').format(title)
-        print '-' + ('-' * fill) + '-+------'
-
-        for tube, value in sorted_data:
-            print output_format.format(value, tube)
-
-        print
 
 
-
-class ListTubesCommand(BaseCommand):
-    __cmd__ = 'tubes'
+class ListAllCommand(ListCommand):
+    __cmd__ = 'all'
     __help__ = "List all tubes"
 
     def run(self, line):
+        titles = ('urgent', 'ready', 'delayed', 'buried', 'reserved')
+        Row = namedtuple('Row', ('Tube',) + titles)
+
+        data = []
         for tube in sorted(self.beanstalkd.tubes(), key=natural_sort_key):
-            print tube
+            stats = self.beanstalkd.stats_tube(tube)
+            data.append(Row(
+                *[tube] + [stats['current-jobs-{0}'.format(t)] for t in titles]
+            ))
+
+        print
+        self.print_table(data)
+        print
 
 
 
 class ListStatusCommand(ListCommand):
     def run(self, line):
-        tubes = {}
-        for tube in self.beanstalkd.tubes():
+        Row = namedtuple('Row', ('Tube', self.__cmd__.title()))
+
+        data = []
+        total_jobs = 0
+        for tube in sorted(self.beanstalkd.tubes(), key=natural_sort_key):
             stats = self.beanstalkd.stats_tube(tube)
             count = int(stats['current-jobs-{0}'.format(self.__cmd__)])
             if count:
-                tubes[tube] = count
+                data.append(Row(tube, count))
+                total_jobs += count
 
-        if not tubes:
+        if not data:
             print 'No tubes have {0} messages'.format(self.__cmd__)
             return
 
-        print 'Listing tubes with {0} messages ({1})'.format(self.__cmd__,
-                                                             len(tubes))
+        total_tubes = len(data)
 
-        self._print_tubes(tubes, self.__cmd__.title())
+        print
+        self.print_table(data)
+        print "\nTotal:\n  {0} {1} job{2} across {3} tube{4}\n".format(
+            total_jobs,
+            self.__cmd__,
+            '' if total_jobs == 1 else 's',
+            total_tubes,
+            '' if total_tubes == 1 else 's',
+        )
 
 
 
@@ -80,3 +81,8 @@ class ListUrgentCommand(ListStatusCommand):
 class ListDelayedCommand(ListStatusCommand):
     __cmd__ = 'delayed'
     __help__ = "List all tubes with delayed jobs"
+
+
+class ListReservedCommand(ListStatusCommand):
+    __cmd__ = 'reserved'
+    __help__ = "List all tubes with reserved jobs"

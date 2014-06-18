@@ -14,14 +14,14 @@ Pid: {pid}
 Uptime: {uptime}
 Tubes: {current-tubes}
 
-Connections | Producers | Workers
-------------+-----------+--------
-{total-connections:^11} | {current-producers:^9} | {current-workers:^8}
+Connections: {total-connections} (total)
+  Producers: {current-producers} (current)
+    Workers: {current-workers} (current)
 
 Jobs:
-  Urgent: {current-jobs-urgent}
-  Ready: {current-jobs-ready}
-  Delayed: {current-jobs-delayed}
+    Urgent: {current-jobs-urgent}
+     Ready: {current-jobs-ready}
+   Delayed: {current-jobs-delayed}
   Reserved: {current-jobs-reserved}
-  Buried: {current-jobs-buried}
+    Buried: {current-jobs-buried}
 """.format(**stats)

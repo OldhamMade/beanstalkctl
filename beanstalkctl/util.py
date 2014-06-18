@@ -40,9 +40,15 @@ def apply_command_chains(console, chain, **kwargs):
     """Recursively build chained commands from a dictionary"""
 
     for k, v in chain.iteritems():
+        if k[0] == '_':
+            continue
 
         if isinstance(v, dict):
-            parent = console.addChild(Command(k))
+            try:
+                help_ = v['__help__']
+            except KeyError:
+                help_ = 'type `{0}` for further options'.format(k)
+            parent = console.addChild(Command(k, help_))
             apply_command_chains(parent, v, **kwargs)
             continue
 
