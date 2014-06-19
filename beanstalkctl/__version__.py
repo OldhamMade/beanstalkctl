@@ -1,3 +1,3 @@
-__author__ = 'Phillip B Oldham <info@oldham-made.net>'
-__version__ = (0, 1, 0)
+__author__ = 'Phillip B Oldham'
+__version__ = "0.2"
 __licence__ = 'BSD'

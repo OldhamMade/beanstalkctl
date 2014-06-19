@@ -1,12 +1,11 @@
 from setuptools import setup, find_packages
 
 from beanstalkctl.__version__ import __author__, __version__, __licence__
-import beanstalkctl
 
 setup(
     name='beanstalkctl',
-    version='.'.join(str(i) for i in __version__),
-    #description=beanstalkctl.__doc__.strip(),
+    version=__version__,
+    description='beanstalkctl -- interact with, and issue commands to, beanstalkd',
     # long_description=long_description(),
     url='https://github.com/OldhamMade/beanstalkctl',
     download_url='https://github.com/OldhamMade/beanstalkctl',

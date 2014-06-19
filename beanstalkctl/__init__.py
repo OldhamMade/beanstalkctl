@@ -13,18 +13,22 @@ import operator
 from docopt import docopt
 from ishell.console import Console
 
+from .bury_commands import *
 from .clear_commands import *
 from .delete_commands import *
 from .kick_commands import *
 from .list_commands import *
 from .overview_commands import *
 from .peek_commands import *
+from .populate_commands import *
 from .put_commands import *
 from .stats_commands import *
 from .whoami_commands import *
 
 from .base import BaseCommand
 from .util import apply_command_chains
+
+from .__version__ import __version__
 
 
 console = Console(prompt="beanstalk", prompt_delim=">")
@@ -64,7 +68,15 @@ def main():
             'tube': TubeStatsCommand,
         },
         'put': PutCommand,
+        'populate': {
+            'tube': PopulateTubeCommand,
+            'tubes': PopulateTubesCommand,
+        },
         'delete': DeleteCommand,
+        'bury': {
+            'one': BuryOneCommand,
+            'tube': BuryTubeCommand,
+        },
         'kick': {
             'list': KickListCommand,
             'one': KickOneCommand,
