@@ -7,7 +7,7 @@ class AllStatsCommand(BaseCommand):
 
     def run(self, line):
         stats = self.beanstalkd.stats()
-        print """
+        self.respond("""
 hostname: {hostname}
 pid: {pid}
 uptime: {uptime}
@@ -62,7 +62,7 @@ binlog:
   oldest-index: {binlog-oldest-index}
   records-written: {binlog-records-written}
   records-migrated: {binlog-records-migrated}
-""".format(**stats)
+""".format(**stats))
 
 
 
@@ -72,7 +72,7 @@ class StatsCommand(BaseCommand):
 
     def run(self, line):
         stats = self.beanstalkd.stats()
-        print """
+        self.respond("""
 hostname: {hostname}
 pid: {pid}
 uptime: {uptime}
@@ -92,7 +92,7 @@ current:
     delayed: {current-jobs-delayed}
     reserved: {current-jobs-reserved}
     buried: {current-jobs-buried}
-""".format(**stats)
+""".format(**stats))
 
 
 
@@ -106,17 +106,17 @@ class TubeStatsCommand(BaseCommand):
     def run(self, line):
         args = line.split()
         if len(args) != 3:
-            print 'Please specify a tube name. Use `list` to view tubes.'
-            return
+            self.respond('Please specify a tube name. Use `list` to view tubes.')
+            return False
 
         tube = args[-1]
 
         if tube not in self.args():
-            print 'The tube "{0}" does not exist'.format(tube)
-            return
+            self.respond('The tube "{0}" does not exist'.format(tube))
+            return False
 
         stats = self.beanstalkd.stats_tube(tube)
-        print """
+        self.respond("""
 name: {name}
 total jobs: {total-jobs}
 
@@ -134,4 +134,4 @@ current jobs:
 
 pause: {pause}
   time-left: {pause-time-left}
-""".format(**stats)
+""".format(**stats))

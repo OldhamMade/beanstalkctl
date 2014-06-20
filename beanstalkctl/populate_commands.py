@@ -137,19 +137,19 @@ class PopulateTubeCommand(PopulateCommand):
         args = line.split()
 
         if not len(args) == 3:
-            print 'Please specify a tube'
-            return
+            self.respond('Please specify a tube')
+            return False
 
         tube = args[-1]
 
         if tube not in self.beanstalkd.tubes():
-            print 'This will create a new tube named {0}'.format(tube)
+            self.respond('This will create a new tube named {0}'.format(tube))
             if not self.user_wants_to_continue():
-                return
+                return False
 
-        count = raw_input('How many jobs would you like to create?\n')
+        count = self.request('How many jobs would you like to create?\n')
         if not count.isdigit():
-            print '{0} is not a number'.format(count)
+            self.respond('{0} is not a number'.format(count))
 
         self.beanstalkd.use(tube)
         jids = [
@@ -162,7 +162,7 @@ class PopulateTubeCommand(PopulateCommand):
             for i in range(int(count))
         ]
 
-        print 'Created {0} jobs:\n  {1}'.format(len(jids), jids)
+        self.respond('Created {0} jobs:\n  {1}'.format(len(jids), jids))
 
 
 class PopulateTubesCommand(PopulateCommand):
@@ -170,15 +170,23 @@ class PopulateTubesCommand(PopulateCommand):
     __help__ = 'populate beanstalkd with random tubes and messages'
 
     def run(self, line):
-        tube_count = raw_input('How many tubes would you like to create?\n')
-        if not tube_count.isdigit():
-            print '{0} is not a number'.format(tube_count)
-            return
+        tube_count = self.request(
+            'How many tubes would you like to create? (default: 1)\n',
+            default=1
+        )
 
-        job_count = raw_input('How many jobs would you like to create?\n')
+        if not tube_count.isdigit():
+            self.respond('{0} is not a number'.format(tube_count))
+            return False
+
+        job_count = self.request(
+            'How many jobs would you like to create? (default: 1)\n',
+            default=1
+        )
+
         if not job_count.isdigit():
-            print '{0} is not a number'.format(job_count)
-            return
+            self.respond('{0} is not a number'.format(job_count))
+            return False
 
         tubes = [
             '{1}/{0}'.format(
@@ -196,9 +204,9 @@ class PopulateTubesCommand(PopulateCommand):
                 )
             )
 
-        print 'Created {0} job{1} across {2} tube{3}.'.format(
+        self.respond('Created {0} job{1} across {2} tube{3}.'.format(
             job_count,
             '' if job_count is 1 else 's',
             tube_count,
             '' if tube_count is 1 else 's',
-        )
+        ))

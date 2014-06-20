@@ -1,3 +1,4 @@
+import sys
 from ishell.command import Command
 from .util import BeanstalkdMixin
 
@@ -23,8 +24,29 @@ class BaseCommand(Command, BeanstalkdMixin):
 
     def user_wants_to_continue(self):
         """Prompt the user for confirmation of command"""
-        response = raw_input('Do you wish to continue? y/N\n')
+        response = self.request(
+            'Do you wish to continue? y/N\n',
+            default='N'
+        )
         return response.lower() in ('y', 'yes')
+
+
+    def request(self, query, default=None, stream=False):
+        if not stream:
+            return raw_input(query) or default
+
+        self.respond(query)
+        return '\n'.join([l.strip() for l in sys.stdin.readlines()])
+
+
+    def respond(self, response):
+        """Print to the screen. Also provides """
+        print response
+
+
+    def cancel(self):
+        self.respond('Operation cancelled.')
+        return False
 
 
     def print_table(self, rows):
@@ -44,7 +66,7 @@ class BaseCommand(Command, BeanstalkdMixin):
         pattern = " | ".join(formats)
         hpattern = " | ".join(hformats)
         separator = "-+-".join(['-' * n for n in lens])
-        print hpattern % tuple(headers)
-        print separator
+        self.respond(hpattern % tuple(headers))
+        self.respond(separator)
         for line in rows:
-            print pattern % tuple(line)
+            self.respond(pattern % tuple(line))

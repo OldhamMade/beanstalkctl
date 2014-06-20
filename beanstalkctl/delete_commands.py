@@ -1,8 +1,8 @@
 from beanstalkc import CommandFailed
-from .base import BaseCommand
+from .peek_commands import PeekCommand
 
 
-class DeleteCommand(BaseCommand):
+class DeleteCommand(PeekCommand):
     __cmd__ = 'delete'
     __help__ = 'delete a job by ID'
 
@@ -10,28 +10,35 @@ class DeleteCommand(BaseCommand):
         args = line.split()
 
         if not len(args) == 2:
-            print 'Please specify a job ID'
-            return
+            self.respond('Please specify a job ID')
+            return False
 
         jid = args[-1]
 
         if not jid.isdigit():
-            print 'ID must be a number'
-            return
+            self.respond('ID must be a number')
+            return False
 
         job = self.beanstalkd.peek(int(jid))
+
+        self.respond("You are about to delete the following job...")
+        self._print_job(job)
+        self.respond('')
+
+        if not self.user_wants_to_continue():
+            return self.cancel()
 
         try:
             job.delete()
             job.stats()
 
         except CommandFailed:
-            print 'Deleted job {0} successfully.'.format(jid)
-            return
+            self.respond('Deleted job {0} successfully.'.format(jid))
+            return True
 
         except AttributeError:
-            print 'Job {0} not found.'.format(jid)
-            return
+            self.respond('Job {0} not found.'.format(jid))
+            return False
 
-        print 'Could not delete job {0}.'.format(jid)
-        return
+        self.respond('Could not delete job {0}.'.format(jid))
+        return False

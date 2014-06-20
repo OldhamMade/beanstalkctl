@@ -42,23 +42,23 @@ class KickOneCommand(KickCommand):
         args = line.split()
 
         if not len(args) == 3:
-            print 'Please specify a tube'
-            return
+            self.respond('Please specify a tube')
+            return False
 
         tube = args[-1]
 
         if tube not in self.beanstalkd.tubes():
-            print 'Tube {0} does not exist.'.format(tube)
-            return
+            self.respond('Tube {0} does not exist.'.format(tube))
+            return False
 
-        print '\nKicking the next buried job on tube {0}:'.format(tube)
+        self.respond('\nKicking the next buried job on tube {0}:'.format(tube))
 
         result = self._kick(tube, 1)
 
-        print '  Successfully kicked {0} job{1}\n'.format(
+        self.respond('  Successfully kicked {0} job{1}\n'.format(
             result,
             '' if result is 1 else 's'
-        )
+        ))
 
 
 class KickTubeCommand(KickCommand):
@@ -72,34 +72,34 @@ class KickTubeCommand(KickCommand):
         args = line.split()
 
         if not len(args) == 3:
-            print 'Please specify a tube'
-            return
+            self.respond('Please specify a tube')
+            return False
 
         tube = args[-1]
 
         if tube not in self.beanstalkd.tubes():
-            print 'Tube {0} does not exist.'.format(tube)
-            return
+            self.respond('Tube {0} does not exist.'.format(tube))
+            return False
 
         stats = self.beanstalkd.stats_tube(tube)
         total_jobs = stats['current-jobs-buried']
 
-        print '\nYou are about to KICK all ({0}) jobs from "{1}".'.format(
+        self.respond('\nYou are about to KICK all ({0}) jobs from "{1}".'.format(
             total_jobs,
             tube,
-        )
+        ))
 
         if not self.user_wants_to_continue():
-            return
+            return False
 
-        print '\nKicking all buried jobs on tube {0}:'.format(tube)
+        self.respond('\nKicking all buried jobs on tube {0}:'.format(tube))
 
         result = self._kick(tube)
 
-        print '  Successfully kicked {0} job{1}\n'.format(
+        self.respond('  Successfully kicked {0} job{1}\n'.format(
             result,
             '' if result is 1 else 's'
-        )
+        ))
 
 
 
@@ -118,22 +118,23 @@ class KickEverythingCommand(KickCommand):
         total_tubes = len(tubes)
         total_jobs = sum(tubes.values())
 
-        print '\nYou are about to KICK all ({0}) jobs from ALL tubes ({1}).'.format(
+        self.respond((
+            '\nYou are about to KICK all '
+            '({0}) jobs from ALL tubes ({1}).').format(
             total_jobs,
             total_tubes,
-        )
+        ))
 
         if not self.user_wants_to_continue():
-            return
+            return False
 
-        print '\nKicking all buried jobs:'
+        self.respond('\nKicking all buried jobs:')
 
         for tube in sorted(tubes.keys(), key=natural_sort_key):
             result = self._kick(tube)
 
-            print '  successfully kicked {0} job{1} on tube {2}'.format(
+            self.respond('  successfully kicked {0} job{1} on tube {2}\n'.format(
                 result,
                 '' if result is 1 else 's',
                 tube,
-            )
-        print
+            ))

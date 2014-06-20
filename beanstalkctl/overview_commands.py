@@ -8,7 +8,7 @@ class OverviewCommand(BaseCommand):
     def run(self, line):
         stats = self.beanstalkd.stats()
         stats['uptime'] = self._format_uptime(stats['uptime'])
-        print """
+        self.respond("""
 Hostname: {hostname}
 Pid: {pid}
 Uptime: {uptime}
@@ -24,4 +24,4 @@ Jobs:
    Delayed: {current-jobs-delayed}
   Reserved: {current-jobs-reserved}
     Buried: {current-jobs-buried}
-""".format(**stats)
+""".format(**stats))

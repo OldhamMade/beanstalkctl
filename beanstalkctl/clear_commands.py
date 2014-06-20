@@ -33,14 +33,14 @@ class ClearCommand(BaseCommand):
 
 
     def _print_result(self, result):
-        print """
+        self.respond("""
 Cleared:
   {ready-cleared} of {ready-all} ready jobs
   {buried-cleared} of {buried-all} buried jobs
 Remaining:
   {ready-remaining} ready jobs
   {buried-remaining} buried jobs
-""".format(**result)
+""".format(**result))
 
 
     def _delete_job(self, job):
@@ -99,27 +99,27 @@ class ClearTubeCommand(ClearCommand):
         args = line.split()
 
         if not len(args) == 3:
-            print 'Please specify a tube'
-            return
+            self.respond('Please specify a tube')
+            return False
 
         tube = args[-1]
 
         if tube not in self.beanstalkd.tubes():
-            print 'Tube {0} does not exist.'.format(tube)
-            return
+            self.respond('Tube {0} does not exist.'.format(tube))
+            return False
 
         tubes = self._get_tube_data()
         total_jobs = tubes[tube]['total']
 
-        print '\nYou are about to CLEAR {0} jobs from "{1}".'.format(
+        self.respond('\nYou are about to CLEAR {0} jobs from "{1}".'.format(
             total_jobs,
             tube,
-        )
+        ))
 
         if not self.user_wants_to_continue():
-            return
+            return False
 
-        print "\nProcessing..."
+        self.respond("\nProcessing...")
 
         ready = dict(zip(['ready-{0}'.format(x) for x in self.titles],
                          self._clear_ready(tube)))
@@ -140,15 +140,17 @@ class ClearEverythingCommand(ClearCommand):
         total_tubes = len(tubes)
         total_jobs = sum(v['total'] for k, v in tubes.iteritems())
 
-        print '\nYou are about to CLEAR {0} jobs from ALL tubes ({1}).'.format(
+        self.respond((
+            '\nYou are about to CLEAR '
+            '{0} jobs from ALL tubes ({1}).').format(
             total_jobs,
             total_tubes,
-        )
+        ))
 
         if not self.user_wants_to_continue():
-            return
+            return False
 
-        print "\nProcessing..."
+        self.respond("\nProcessing...")
 
         ready = dict((['ready-{0}'.format(x), 0] for x in self.titles))
         buried = dict((['buried-{0}'.format(x), 0] for x in self.titles))

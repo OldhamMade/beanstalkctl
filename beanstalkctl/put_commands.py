@@ -1,4 +1,3 @@
-import sys
 from ishell.utils import _print
 from .base import BaseCommand
 
@@ -14,31 +13,42 @@ class PutCommand(BaseCommand):
         args = line.split()
 
         if not len(args) == 2:
-            print 'Please specify a tube'
-            return
+            self.respond('Please specify a tube')
+            return False
 
         tube = args[-1]
 
         try:
 
-            print 'Put a message onto tube "{0}":'.format(tube)
+            self.respond('Put a message onto tube "{0}":'.format(tube))
 
             if tube not in self.beanstalkd.tubes():
-                print '  tube {0} does not exist and will be created'.format(tube)
+                self.respond(
+                    '  tube {0} does not exist and will be created'.format(tube)
+                )
 
-            priority = raw_input('  priority (default: {0}): '.format(2**31)) \
-                       or None
+            priority = self.request(
+                '  priority (default: {0}): '.format(2**31),
+                default=None
+            )
 
-            delay = raw_input('  delay (default: 0): ') \
-                    or 0
+            delay = self.request(
+                '  delay (default: 0): ',
+                default=0
+            )
 
-            ttr =  raw_input('  time-to-run (default: 120s): ') \
-                   or None
+            ttr = self.request(
+                '  time-to-run (default: 120s): ',
+                default=None
+            )
 
-            print '  body (ctrl+d to continue):'
-            body = '\n'.join([l.strip() for l in sys.stdin.readlines()])
+            body = self.request(
+                '  body (ctrl+d to continue):',
+                default="",
+                stream=True,
+            )
 
-            print """
+            self.respond("""
 
 Confirm job:
   tube: {tube}
@@ -54,13 +64,11 @@ Confirm job:
     delay=delay,
     ttr=ttr if ttr else 120,
     body=body,
-)
+))
 
-            response = raw_input('Do you wish to continue? y/N\n')
+            if not self.user_wants_to_continue():
+                return self.cancel()
 
-            if response.lower() not in ('y', 'yes'):
-                print 'Cancelled.'
-                return
             self.beanstalkd.use(tube)
 
             kwargs = {}
@@ -76,7 +84,8 @@ Confirm job:
 
             jid = self.beanstalkd.put(body, **kwargs)
 
-            print 'Successfully created job: {0}'.format(jid)
+            self.respond('Successfully created job: {0}'.format(jid))
+
         except KeyboardInterrupt:
             _print('Cancelling put operation.')
-            return
+            return False

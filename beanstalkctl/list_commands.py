@@ -26,9 +26,9 @@ class ListAllCommand(ListCommand):
                 *[tube] + [stats['current-jobs-{0}'.format(t)] for t in titles]
             ))
 
-        print
+        self.respond('')
         self.print_table(data)
-        print
+        self.respond('')
 
 
 
@@ -46,20 +46,20 @@ class ListStatusCommand(ListCommand):
                 total_jobs += count
 
         if not data:
-            print 'No tubes have {0} messages'.format(self.__cmd__)
-            return
+            self.respond('No tubes have {0} messages'.format(self.__cmd__))
+            return False
 
         total_tubes = len(data)
 
         print
         self.print_table(data)
-        print "\nTotal:\n  {0} {1} job{2} across {3} tube{4}\n".format(
+        self.respond("\nTotal:\n  {0} {1} job{2} across {3} tube{4}\n".format(
             total_jobs,
             self.__cmd__,
             '' if total_jobs == 1 else 's',
             total_tubes,
             '' if total_tubes == 1 else 's',
-        )
+        ))
 
 
 

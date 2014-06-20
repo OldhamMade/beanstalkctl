@@ -9,8 +9,8 @@ class PeekCommand(BaseCommand):
         args = line.split()
 
         if not len(args) == 3:
-            print 'Please specify a tube'
-            return
+            self.respond('Please specify a tube')
+            return False
 
         tube = args[-1]
 
@@ -23,10 +23,10 @@ class PeekCommand(BaseCommand):
 
     def _print_job(self, job):
         if not job:
-            print 'No job found'
-            return
+            self.respond('No job found')
+            return False
 
-        print """
+        self.respond("""
 id: {id}
   age: {age}
   ttr: {ttr}
@@ -38,7 +38,7 @@ id: {id}
   kicks: {kicks}
 --body:--
 {body}
----------""".format(body=job.body, **job.stats())
+---------""".format(body=job.body, **job.stats()))
 
 
 
@@ -50,8 +50,8 @@ class PeekByIDCommand(PeekCommand):
         args = line.split()
 
         if not len(args) == 3:
-            print 'Please specify a tube'
-            return
+            self.respond('Please specify a tube')
+            return False
 
         _id = int(args[-1])
         job = self.beanstalkd.peek(_id)
