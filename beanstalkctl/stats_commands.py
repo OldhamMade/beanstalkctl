@@ -105,6 +105,7 @@ class TubeStatsCommand(BaseCommand):
 
     def run(self, line):
         args = line.split()
+
         if len(args) != 3:
             self.respond('Please specify a tube name. Use `list` to view tubes.')
             return False

@@ -31,7 +31,7 @@ from .util import apply_command_chains
 from .__version__ import __version__
 
 
-console = Console(prompt="beanstalk", prompt_delim=">")
+console = Console(prompt="beanstalkctl", prompt_delim=">")
 
 
 class HelpCommand(BaseCommand):

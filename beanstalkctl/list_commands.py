@@ -51,7 +51,7 @@ class ListStatusCommand(ListCommand):
 
         total_tubes = len(data)
 
-        print
+        self.respond('')
         self.print_table(data)
         self.respond("\nTotal:\n  {0} {1} job{2} across {3} tube{4}\n".format(
             total_jobs,

@@ -2,6 +2,7 @@ import beanstalkc
 from ishell.command import Command
 
 
+
 try:
     import re2 as re
 except ImportError:
@@ -26,8 +27,9 @@ class BeanstalkdMixin(object):
             return self._beanstalkd_connection
 
         except beanstalkc.SocketError:
-            raise Exception(
-                'Unable to connect to beanstalkd on {0}:{1}'.format(
+            raise SystemExit(
+                ('Unable to connect to beanstalkd on {0}:{1}\n'
+                 'Terminating.').format(
                     self.beanstalkd_host,
                     self.beanstalkd_port))
 
