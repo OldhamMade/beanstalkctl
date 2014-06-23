@@ -15,7 +15,6 @@ install:
   - make -C beanstalkd-1.9/
   - mv beanstalkd-1.9/beanstalkd .
   - python bootstrap.py
-  - ls -l .
   - bin/buildout
 
 script: bin/specs

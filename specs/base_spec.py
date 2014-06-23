@@ -26,6 +26,7 @@ class BaseSpec(unittest.TestCase):
 
     def _beanstalkd_path(self):
         beanstalkd = os.getenv('BEANSTALKD', 'beanstalkd')
+
         if not beanstalkd:
             beanstalkd = self._beanstalkd_which()
 
@@ -34,6 +35,7 @@ class BaseSpec(unittest.TestCase):
     BEANSTALKD_PATH = property(_beanstalkd_path)
 
     def base_setup(self):
+        print "Using beanstalkd: {0}".format(self.BEANSTALKD_PATH)
         print "Starting up the beanstalkd instance...",
         self.BEANSTALKD_INSTANCE = subprocess.Popen(
             [self.BEANSTALKD_PATH, '-p', str(self.BEANSTALKD_PORT)],
