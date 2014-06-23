@@ -2,6 +2,8 @@ beanstalkctl
 ============
 
 A shell-like interface for interacting with beanstalkd.
+Put, peek at, bury, and delete jobs, list tubes, and get
+status information.
 
 .. image:: ScreenShot.png
 
@@ -9,7 +11,7 @@ Commands
 --------
 
 ``help``
-  print the help message
+  Print the help message
 
 ``overview``
   Show an overview of the current status of the beanstalkd server
@@ -38,7 +40,7 @@ Commands
   List all tubes with urgent jobs
 
 ``put <tube>``
-  put a message onto a queue
+  Put a message onto a queue
 
 ``peek buried``
   Peek at the next buried job on a tube
@@ -48,28 +50,28 @@ Commands
   Peek at the next ready job on a tube
 
 ``bury one <tube>``
-  bury the next ready job on a tube
+  Bury the next ready job on a tube
 ``bury tube <tube>``
-  bury all jobs on a tube
+  Bury all jobs on a tube
 
 ``kick list``
-  list all tubes with buried jobs
+  List all tubes with buried jobs
 ``kick one <tube>``
-  kick the next buried job on a tube
+  Kick the next buried job on a tube
 ``kick tube <tube>``
-  kick all buried jobs on a tube
+  Kick all buried jobs on a tube
 ``kick everything``
-  kick all buried jobs from all tubes
+  Kick all buried jobs from all tubes
 
 ``delete <id>``
-  delete a job by ID
+  Delete a job by ID
 
 ``clear tube <tube>``
-  clear a tube of all jobs
+  Clear a tube of all jobs
 ``clear everything``
-  clear all tubes of all jobs
+  Clear all tubes of all jobs
 
 ``populate tube <tube>``
-  populate a tube with random jobs
+  Populate a tube with random jobs
 ``populate tubes``
-  populate beanstalkd with random tubes and messages
+  Populate beanstalkd with random tubes and messages
