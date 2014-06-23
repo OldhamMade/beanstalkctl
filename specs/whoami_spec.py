@@ -9,7 +9,7 @@ class WhoAmISpec(BaseSpec):
         self.base_teardown()
 
 
-    def it_should_list_all(self):
+    def it_should_show_connection_details(self):
         expected = """Connected to {0} on port {1}""".format(
             self.BEANSTALKD_HOST,
             self.BEANSTALKD_PORT,

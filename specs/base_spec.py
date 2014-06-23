@@ -1,4 +1,5 @@
 import os
+import signal
 import subprocess
 import beanstalkc
 import time
@@ -13,28 +14,24 @@ except ImportError:
 
 class BaseSpec(unittest.TestCase):
     BEANSTALKD_INSTANCE = None
-    BEANSTALKD_HOST = '0.0.0.0'
+    BEANSTALKD_HOST = '127.0.0.1'
     BEANSTALKD_PORT = 11411
 
-    def _beanstalkd_which(self):
-        return subprocess.call(
-            ['which', 'beanstalkd', ],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            shell=False,
-        )
-
     def _beanstalkd_path(self):
-        beanstalkd = os.getenv('BEANSTALKD', 'beanstalkd')
+        beanstalkd = os.getenv('BEANSTALKD')
 
-        if not beanstalkd:
-            beanstalkd = self._beanstalkd_which()
+        if beanstalkd:
+            return os.path.abspath(os.path.join(
+                os.path.dirname(__file__),
+                '..', beanstalkd))
 
-        return beanstalkd
+        # assume beanstalkd is
+        # installed globally
+        return 'beanstalkd'
 
     BEANSTALKD_PATH = property(_beanstalkd_path)
 
-    def base_setup(self):
+    def _start_beanstalkd(self):
         print "Using beanstalkd: {0}".format(self.BEANSTALKD_PATH)
         print "Starting up the beanstalkd instance...",
         self.BEANSTALKD_INSTANCE = subprocess.Popen(
@@ -43,8 +40,11 @@ class BaseSpec(unittest.TestCase):
             stderr=subprocess.PIPE,
             shell=False,
         )
-        time.sleep(0.2)
+        print 'running as {0}...'.format(self.BEANSTALKD_INSTANCE),
         print "done."
+
+    def base_setup(self):
+        self._start_beanstalkd()
 
         beanstalkctl = ' '.join([
             os.path.join(
@@ -59,21 +59,16 @@ class BaseSpec(unittest.TestCase):
 
         self.beanstalkctl = pexpect.spawn(beanstalkctl, logfile=self.logfh)
 
-        # self.logfilehandler_read = open(
-        #     '{0}_read.log'.format(self.__class__.__name__), 'w', 0)
-        # self.logfilehandler_send = open(
-        #     '{0}_send.log'.format(self.__class__.__name__), 'w', 0)
-        # self.beanstalkctl.logfile_read = self.logfilehandler_read
-        # self.beanstalkctl.logfile_send = self.logfilehandler_send
-
         self.beanstalkctl.setecho(False)
         self.beanstalkctl.expect('beanstalkctl> ')
 
 
     def base_teardown(self):
-        # self.beanstalkctl.logfile_read.close()
-        # self.beanstalkctl.logfile_send.close()
         self.logfh.close()
+
+        if not self.BEANSTALKD_INSTANCE:
+            return
+
         print "Shutting down the beanstalkd instance...",
         self.BEANSTALKD_INSTANCE.terminate()
         print "done."
@@ -109,7 +104,7 @@ class BaseSpec(unittest.TestCase):
         """
         p = subprocess.Popen(
             command,
-            shell=True,
+            shell=False,
             env=env,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
