@@ -10,7 +10,7 @@ Commands
   print the help message
 
 ``overview``
-  an overview of the current status
+  Show an overview of the current status of the beanstalkd server
 
 ``whoami``
   Show the current connection details
