@@ -78,3 +78,6 @@ Commands
   Populate a tube with random jobs
 ``populate tubes``
   Populate beanstalkd with random tubes and messages
+
+``version``
+  Print the beanstalkctl version
