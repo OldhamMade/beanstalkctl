@@ -18,7 +18,7 @@ class BaseSpec(unittest.TestCase):
 
     def _beanstalkd_exists(self):
         return not bool(subprocess.call(
-            ['which', 'beanstalkd', ],
+            ['beanstalkd', '-v' ],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             shell=False,

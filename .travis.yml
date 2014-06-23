@@ -4,7 +4,16 @@ python:
   - "2.6"
   - "2.7"
 
+env:
+  global:
+    - BEANSTALKD=./beanstalkd
+
 install:
+  # Install most recent beanstalkd from source
+  - wget https://github.com/kr/beanstalkd/archive/v1.9.tar.gz
+  - tar xf v1.9.tar.gz
+  - make -C beanstalkd-1.9/
+  - mv beanstalkd-1.9/beanstalkd .
   - python bootstrap.py
   - bin/buildout
 
