@@ -1,17 +1,15 @@
 from setuptools import setup, find_packages
 
-from beanstalkctl.__version__ import __author__, __version__, __licence__
-
 setup(
     name='beanstalkctl',
-    version=__version__,
+    version='0.3.0',
     description='beanstalkctl -- interact with, and issue commands to, beanstalkd',
     # long_description=long_description(),
     url='https://github.com/OldhamMade/beanstalkctl',
     download_url='https://github.com/OldhamMade/beanstalkctl',
-    author=__author__,
+    author='Phillip B Oldham',
     author_email='info@oldham-made.net',
-    license=__licence__,
+    license='BSD',
     packages=find_packages(),
     entry_points={
         'console_scripts': [
