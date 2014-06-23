@@ -3,6 +3,8 @@ beanstalkctl
 
 A shell-like interface for interacting with beanstalkd.
 
+.. image:: https://raw.githubusercontent.com/OldhamMade/beanstalkctl/master/ScreenShot.png
+
 Commands
 --------
 
