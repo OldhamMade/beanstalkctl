@@ -1,6 +1,9 @@
 beanstalkctl
 ============
 
+.. image:: https://travis-ci.org/OldhamMade/beanstalkctl.svg?branch=master
+    :target: https://travis-ci.org/OldhamMade/beanstalkctl
+
 A shell-like interface for interacting with beanstalkd.
 Put, peek at, bury, and delete jobs, list tubes, and get
 status information.

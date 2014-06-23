@@ -16,21 +16,27 @@ class BaseSpec(unittest.TestCase):
     BEANSTALKD_HOST = '0.0.0.0'
     BEANSTALKD_PORT = 11411
 
-    def _beanstalkd_exists(self):
-        return not bool(subprocess.call(
-            ['beanstalkd', '-v' ],
+    def _beanstalkd_which(self):
+        return subprocess.call(
+            ['which', 'beanstalkd', ],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             shell=False,
-        ))
+        )
 
-    BEANSTALKD_EXISTS = property(_beanstalkd_exists)
+    def _beanstalkd_path(self):
+        beanstalkd = os.getenv('BEANSTALKD', 'beanstalkd')
+        if not beanstalkd:
+            beanstalkd = self._beanstalkd_which()
 
+        return beanstalkd
+
+    BEANSTALKD_PATH = property(_beanstalkd_path)
 
     def base_setup(self):
         print "Starting up the beanstalkd instance...",
         self.BEANSTALKD_INSTANCE = subprocess.Popen(
-            ['beanstalkd', '-p', str(self.BEANSTALKD_PORT)],
+            [self.BEANSTALKD_PATH, '-p', str(self.BEANSTALKD_PORT)],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             shell=False,
@@ -132,7 +138,7 @@ class BasicSpec(BaseSpec):
         self.base_teardown()
 
     def ensure_beanstalkd_exists(self):
-        self.assertTrue(self.BEANSTALKD_EXISTS)
+        self.assertTrue(self.BEANSTALKD_PATH)
 
     def ensure_beanstalkd_starts(self):
         self.assertTrue(self.conn)

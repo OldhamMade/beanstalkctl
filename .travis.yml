@@ -14,6 +14,7 @@ install:
   - tar xf v1.9.tar.gz
   - make -C beanstalkd-1.9/
   - mv beanstalkd-1.9/beanstalkd .
+  - beanstalkd -v
   - python bootstrap.py
   - bin/buildout
 
