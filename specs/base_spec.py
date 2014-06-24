@@ -123,6 +123,14 @@ class BaseSpec(unittest.TestCase):
         return text.strip()
 
 
+def skipped(func):
+    from nose.plugins.skip import SkipTest
+    def wrapper(*args, **kwargs):
+        raise SkipTest("Test %s is skipped" % func.__name__)
+    wrapper.__name__ = func.__name__
+    return wrapper
+
+
 
 class BasicSpec(BaseSpec):
     def setUp(self):
