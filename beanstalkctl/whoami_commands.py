@@ -6,6 +6,7 @@ class WhoAmICommand(BaseCommand):
     __help__ = 'Show the current connection details'
 
     def run(self, line):
+        stats = self.beanstalkd.stats()
         self.respond('Connected to {0} on port {1}'.format(
-            self.beanstalkd_host,
+            stats['hostname'],
             self.beanstalkd_port))

@@ -1,3 +1,4 @@
+import socket
 from .base_spec import BaseSpec
 
 
@@ -10,10 +11,14 @@ class WhoAmISpec(BaseSpec):
 
 
     def it_should_show_connection_details(self):
+        hostname = socket.gethostname()
+
         expected = """Connected to {0} on port {1}""".format(
-            self.BEANSTALKD_HOST,
+            hostname,
             self.BEANSTALKD_PORT,
         )
+
         result = self.interact('whoami')
+
         self.assertEqual(self.clean(result),
                          self.clean(expected))
