@@ -78,28 +78,6 @@ class BuryOneCommand(BuryCommand):
         return self._bury_one(tube)
 
 
-class BuryByIDCommand(BuryCommand):
-    __cmd__ = 'id'
-    __help__ = 'bury a job by ID'
-
-    def args(self):
-        return self.beanstalkd.tubes()
-
-    def run(self, line):
-        args = line.split()
-
-        if not len(args) == 3:
-            self.respond('Please specify an id')
-            return False
-
-        jid = args[-1]
-
-        if not jid.isdigit():
-            self.respond('ID must be a number')
-            return False
-
-        return self._bury_id(int(jid))
-
 
 class BuryTubeCommand(BuryCommand):
     __cmd__ = 'tube'
@@ -139,3 +117,26 @@ class BuryTubeCommand(BuryCommand):
         return self._bury_all(tube)
 
 
+
+# Not implemented
+# class BuryByIDCommand(BuryCommand):
+#     __cmd__ = 'id'
+#     __help__ = 'bury a job by ID'
+
+#     def args(self):
+#         return self.beanstalkd.tubes()
+
+#     def run(self, line):
+#         args = line.split()
+
+#         if not len(args) == 3:
+#             self.respond('Please specify an id')
+#             return False
+
+#         jid = args[-1]
+
+#         if not jid.isdigit():
+#             self.respond('ID must be a number')
+#             return False
+
+#         return self._bury_id(int(jid))

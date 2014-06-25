@@ -53,8 +53,13 @@ class PeekByIDCommand(PeekCommand):
             self.respond('Please specify a tube')
             return False
 
-        _id = int(args[-1])
-        job = self.beanstalkd.peek(_id)
+        try:
+            jid = int(args[-1])
+        except ValueError:
+            self.respond('"{0}" is not a number'.format(args[-1]))
+            return
+
+        job = self.beanstalkd.peek(jid)
         self._print_job(job)
 
 

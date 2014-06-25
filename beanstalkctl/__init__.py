@@ -23,6 +23,7 @@ from .peek_commands import *
 from .populate_commands import *
 from .put_commands import *
 from .stats_commands import *
+from .uptime_commands import *
 from .version_commands import *
 from .whoami_commands import *
 
@@ -62,6 +63,7 @@ def main():
             'id': PeekByIDCommand,
             'ready': PeekReadyCommand,
             'buried': PeekBuriedCommand,
+            'delayed': PeekDelayedCommand,
         },
         'stats': {
             'short': StatsCommand,
@@ -89,6 +91,7 @@ def main():
             'everything': ClearEverythingCommand,
         },
         'version': VersionCommand,
+        'uptime': UptimeCommand,
     }
 
     apply_command_chains(console, command_chains,

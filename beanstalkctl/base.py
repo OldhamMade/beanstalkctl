@@ -16,7 +16,8 @@ class BaseCommand(Command, BeanstalkdMixin):
         Command.__init__(self, *args, **kwargs)
 
 
-    def _format_uptime(self, seconds):
+    @staticmethod
+    def _format_uptime(seconds):
         hours, remainder = divmod(seconds, 3600)
         minutes, seconds = divmod(remainder, 60)
         return u'{0}h {1}m {2}s'.format(hours, minutes, seconds)
@@ -40,7 +41,9 @@ class BaseCommand(Command, BeanstalkdMixin):
 
 
     def respond(self, response):
-        """Print to the screen. Also provides """
+        """Print to the screen. Also provides a
+        method which can be overwritten to capture
+        responses differently"""
         print response
 
 

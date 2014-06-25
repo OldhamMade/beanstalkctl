@@ -15,7 +15,7 @@ class WhoAmISpec(BaseSpec):
 
         expected = """Connected to {0} on port {1}""".format(
             hostname,
-            self.BEANSTALKD_PORT,
+            self.beanstalkd_port,
         )
 
         result = self.interact('whoami')

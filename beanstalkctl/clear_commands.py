@@ -109,7 +109,14 @@ class ClearTubeCommand(ClearCommand):
             return False
 
         tubes = self._get_tube_data()
-        total_jobs = tubes[tube]['total']
+        try:
+            total_jobs = tubes[tube].get('total', 0)
+        except KeyError:
+            total_jobs = 0
+
+        if not total_jobs:
+            self.respond('No jobs to clear on {0}'.format(tube))
+            return
 
         self.respond('\nYou are about to CLEAR {0} jobs from "{1}".'.format(
             total_jobs,
@@ -157,11 +164,11 @@ class ClearEverythingCommand(ClearCommand):
 
         for tube in tubes:
             result = self._clear_ready(tube)
-            for i, item in enumerate(titles):
+            for i, item in enumerate(self.titles):
                 ready['ready-{0}'.format(item)] += result[i]
 
             result = self._clear_buried(tube)
-            for i, item in enumerate(titles):
+            for i, item in enumerate(self.titles):
                 buried['buried-{0}'.format(item)] += result[i]
 
         self._print_result(dict(ready.items() + buried.items()))

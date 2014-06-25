@@ -10,12 +10,14 @@ try:
 except ImportError:
     import unittest
 
+from beanstalkctl.util import BeanstalkdMixin
 
 
-class BaseSpec(unittest.TestCase):
-    BEANSTALKD_INSTANCE = None
-    BEANSTALKD_HOST = '127.0.0.1'
-    BEANSTALKD_PORT = 11411
+
+class BaseSpec(unittest.TestCase, BeanstalkdMixin):
+    beanstalkd_instance = None
+    beanstalkd_host = '127.0.0.1'
+    beanstalkd_port = 11411
 
     def _beanstalkd_path(self):
         beanstalkd = os.getenv('BEANSTALKD')
@@ -29,18 +31,18 @@ class BaseSpec(unittest.TestCase):
         # installed globally
         return 'beanstalkd'
 
-    BEANSTALKD_PATH = property(_beanstalkd_path)
+    beanstalkd_path = property(_beanstalkd_path)
 
     def _start_beanstalkd(self):
-        print "Using beanstalkd: {0}".format(self.BEANSTALKD_PATH)
+        print "Using beanstalkd: {0}".format(self.beanstalkd_path)
         print "Starting up the beanstalkd instance...",
-        self.BEANSTALKD_INSTANCE = subprocess.Popen(
-            [self.BEANSTALKD_PATH, '-p', str(self.BEANSTALKD_PORT)],
+        self.beanstalkd_instance = subprocess.Popen(
+            [self.beanstalkd_path, '-p', str(self.beanstalkd_port)],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             shell=False,
         )
-        print 'running as {0}...'.format(self.BEANSTALKD_INSTANCE),
+        print 'running as {0}...'.format(self.beanstalkd_instance),
         print "done."
 
     def base_setup(self):
@@ -51,8 +53,8 @@ class BaseSpec(unittest.TestCase):
                 os.path.dirname(self.call('pwd')),
                 'bin',
                 'beanstalkctl'),
-            '--host={0}'.format(self.BEANSTALKD_HOST),
-            '--port={0}'.format(self.BEANSTALKD_PORT), ])
+            '--host={0}'.format(self.beanstalkd_host),
+            '--port={0}'.format(self.beanstalkd_port), ])
 
         self.logfh = open(
             '{0}.log'.format(self.__class__.__name__), 'w', 0)
@@ -66,17 +68,17 @@ class BaseSpec(unittest.TestCase):
     def base_teardown(self):
         self.logfh.close()
 
-        if not self.BEANSTALKD_INSTANCE:
+        if not self.beanstalkd_instance:
             return
 
         print "Shutting down the beanstalkd instance...",
-        self.BEANSTALKD_INSTANCE.terminate()
+        self.beanstalkd_instance.terminate()
         print "done."
 
 
-    def interact(self, cmd):
+    def interact(self, cmd, expect='beanstalkctl> '):
         self.beanstalkctl.sendline(cmd)
-        self.beanstalkctl.expect_exact('beanstalkctl> ')
+        self.beanstalkctl.expect_exact(expect)
         return self.get_response()
 
 
@@ -129,25 +131,3 @@ def skipped(func):
         raise SkipTest("Test %s is skipped" % func.__name__)
     wrapper.__name__ = func.__name__
     return wrapper
-
-
-
-class BasicSpec(BaseSpec):
-    def setUp(self):
-        self.base_setup()
-        self.conn = beanstalkc.Connection(
-            host=self.BEANSTALKD_HOST,
-            port=self.BEANSTALKD_PORT)
-
-    def tearDown(self):
-        self.base_teardown()
-
-    def ensure_beanstalkd_exists(self):
-        self.assertTrue(self.BEANSTALKD_PATH)
-
-    def ensure_beanstalkd_starts(self):
-        self.assertTrue(self.conn)
-
-    def ensure_beanstalkctl_responds(self):
-        result = self.interact('help')
-        self.assertTrue(result.strip())
